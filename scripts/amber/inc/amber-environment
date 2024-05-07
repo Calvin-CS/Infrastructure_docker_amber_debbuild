@@ -7,7 +7,7 @@ proc ModulesHelp { } {
 module-whatis "This module adds AmberAMBERVERSION to your path\n"
 
 prereq cuda-CUDAVERSION
-prereq openmpi-OPENMPIEXACTVERSION
+prereq openmpi-OPENMPIVERSION
 prereq plumed-PLUMEDVERSION
 
 set version amberAMBERVERSION

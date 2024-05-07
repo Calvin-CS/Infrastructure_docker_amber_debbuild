@@ -61,7 +61,7 @@ echo "Package requirements: ${REQUIRES}"
 # Load required environment modules -- CUDA and OpenMPI
 module purge
 module load cuda-${CUDAVERSION}
-module load openmpi-${OPENMPIEXACTVERSION}
+module load openmpi-${OPENMPIVERSION}
 
 # Checkinstall build script
 cd /src/plumed/plumed-${PLUMEDVERSION}

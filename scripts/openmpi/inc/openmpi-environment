@@ -8,7 +8,7 @@ module-whatis "This module adds openmpi to your path\n"
 
 prereq cuda-CUDAVERSION
 
-set version OPENMPIEXACTVERSION
+set version OPENMPIVERSION
 set basedir "INSTALLPREFIX/openmpi-${version}"
 prepend-path PATH "${basedir}/bin"
 prepend-path LD_LIBRARY_PATH "${basedir}/lib"

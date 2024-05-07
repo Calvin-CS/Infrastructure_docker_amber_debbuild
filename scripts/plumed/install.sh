@@ -17,11 +17,11 @@ fi
 # Load required environment modules -- CUDA and OpenMPI
 module purge
 module load cuda-${CUDAVERSION}
-module load openmpi-${OPENMPIEXACTVERSION}
+module load openmpi-${OPENMPIVERSION}
 
 # run the make install
 cd /src/plumed/plumed-${PLUMEDVERSION}
 make install
 
 # make the updated modules file
-sed -e "s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:OPENMPIEXACTVERSION:${OPENMPIEXACTVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/plumed/inc/plumed-environment > ${MODULESDIR}/plumed-${PLUMEDVERSION}
+sed -e "s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/plumed/inc/plumed-environment > ${MODULESDIR}/plumed-${PLUMEDVERSION}

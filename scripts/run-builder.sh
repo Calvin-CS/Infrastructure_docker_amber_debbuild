@@ -2,13 +2,15 @@
 
 # Welcome
 echo "##############################################################"
-echo "Welcome to the Amber/AmberTools deb builder for Ubuntu!"
-echo ""
-echo "This program is offered for system administration convienence,"
-echo "and all licenses are accepted and bound to the person running"
-echo "this script. Use this builder at your own RISK."
-echo ""
-echo "Get some coffee -- this is gonna take a LONG TIME...."
+echo "# Welcome to the Amber/AmberTools deb builder for Ubuntu!"
+echo "#"
+echo "# These scripts are for system administration convienence,"
+echo "# and all licenses, terms and conditions, and legal"
+echo "# responsibilities are accepted and bound to the person"
+echo "# running these scripts. Use this builder at your own RISK."
+echo "#"
+echo "# Get some coffee or go out for lunch -- this is gonna take"
+echo "# a LOOOOONG TIME...."
 echo "##############################################################"
 
 # Read in variables
@@ -53,9 +55,7 @@ CODENAME=$(lsb_release -cs)
 # Refresh APT cache
 apt-get update -y
 
-#SUBBUILDS=("cuda" "openmpi" "libboost" "plumed" "amber")
-#SUBBUILDS=("cuda" "openmpi" "libboost" "plumed")
-SUBBUILDS=("amber")
+SUBBUILDS=("cuda" "openmpi" "libboost" "plumed" "amber")
 for build in ${SUBBUILDS[@]}
 do
 
@@ -90,6 +90,7 @@ echo "##############################################################"
 echo "# BUILD COMPLETE!"
 echo "# -----------------------------------------------------------"
 echo "# Debian packages can be found in: ./pkgs/${CODENAME}"
+echo "# All these packages are required to install the amber package."
 echo "# Have a nice day!"
 echo "##############################################################"
 ls -al /pkgs/${CODENAME}/*.deb

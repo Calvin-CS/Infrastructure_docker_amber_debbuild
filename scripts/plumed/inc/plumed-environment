@@ -2,7 +2,7 @@
 
 # Manually add here dependencies and conflicts
 prereq cuda-CUDAVERSION
-prereq openmpi-OPENMPIEXACTVERSION
+prereq openmpi-OPENMPIVERSION
 
 # this is the path for libraries
 set libdir "INSTALLPREFIX/plumed-PLUMEDVERSION/lib"

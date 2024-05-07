@@ -20,7 +20,7 @@ fi
 # Load required environment modules -- CUDA and OpenMPI
 module purge
 module load cuda-${CUDAVERSION}
-module load openmpi-${OPENMPIEXACTVERSION}
+module load openmpi-${OPENMPIVERSION}
 
 # run the make install
 cd /src/libboost/boost_${LIBBOOSTVERSIONUNDERSCORE}

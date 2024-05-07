@@ -14,6 +14,10 @@ set +a
 # Source modules
 . /etc/profile.d/modules.sh
 
+# Figure out the major version of OPENMPI, based off of OPENMPIVERSION
+OPENMPIMAJORVERSION=$(echo $OPENMPIVERSION | awk -F. '{print $1 "." $2;}' -)
+echo "OPENMPIMAJORVERSION: $OPENMPIMAJORVERSION"
+
 # Variables you shouldn't change
 # ###################################################
 PKGNAME=openmpi-redist
@@ -23,7 +27,7 @@ CODENAME=$(lsb_release -cs)
 NPROC=$(nproc)
 
 # Download URL
-URL="https://download.open-mpi.org/release/open-mpi/v${OPENMPIMAJORVERSION}/openmpi-${OPENMPIEXACTVERSION}.tar.gz"
+URL="https://download.open-mpi.org/release/open-mpi/v${OPENMPIMAJORVERSION}/openmpi-${OPENMPIVERSION}.tar.gz"
 
 # Check to see if source is extracted, if not, extract it
 if ! test -d /src/openmpi; then
@@ -32,16 +36,16 @@ if ! test -d /src/openmpi; then
 fi
 
 # Check if src tar.gz exists, if NOT, download it
-if ! test -f /src/openmpi/openmpi-${OPENMPIEXACTVERSION}.tar.gz; then
-  echo "Downloading source for openmpi openmpi-${OPENMPIEXACTVERSION}.tar.gz"
-  wget ${URL} -O /src/openmpi/openmpi-${OPENMPIEXACTVERSION}.tar.gz
+if ! test -f /src/openmpi/openmpi-${OPENMPIVERSION}.tar.gz; then
+  echo "Downloading source for openmpi openmpi-${OPENMPIVERSION}.tar.gz"
+  wget ${URL} -O /src/openmpi/openmpi-${OPENMPIVERSION}.tar.gz
 fi
 
 # Check if sources have been unzipped
-if ! test -d /src/openmpi/openmpi-${OPENMPIEXACTVERSION}; then
-  echo "Unzipping source for openmpi openmpi-${OPENMPIEXACTVERSION}.tar.gz"
+if ! test -d /src/openmpi/openmpi-${OPENMPIVERSION}; then
+  echo "Unzipping source for openmpi openmpi-${OPENMPIVERSION}.tar.gz"
   cd /src/openmpi/
-  tar zxfv openmpi-${OPENMPIEXACTVERSION}.tar.gz
+  tar zxfv openmpi-${OPENMPIVERSION}.tar.gz
 fi
 
 # Requires
@@ -64,9 +68,9 @@ module purge
 module load cuda-${CUDAVERSION}
 
 # Checkinstall build script
-cd /src/openmpi/openmpi-${OPENMPIEXACTVERSION}
+cd /src/openmpi/openmpi-${OPENMPIVERSION}
 make clean
-./configure --prefix=${INSTALLPREFIX}/openmpi-${OPENMPIEXACTVERSION} --enable-mpi-java --with-cuda=${INSTALLPREFIX}/cuda-${CUDAVERSION}/linux-x86_64 --without-ofi --without-verbs --without-psm2 --with-devel-headers --enable-mpi-cxx --enable-mpi-fortran
+./configure --prefix=${INSTALLPREFIX}/openmpi-${OPENMPIVERSION} --enable-mpi-java --with-cuda=${INSTALLPREFIX}/cuda-${CUDAVERSION}/linux-x86_64 --without-ofi --without-verbs --without-psm2 --with-devel-headers --enable-mpi-cxx --enable-mpi-fortran
 make -j${NPROC}
 
 # Checkinstall go go
@@ -74,7 +78,7 @@ checkinstall  \
 	-D -y \
 	-A amd64 \
 	--pkgname=$PKGNAME \
-	--pkgversion=$OPENMPIEXACTVERSION \
+	--pkgversion=$OPENMPIVERSION \
 	--pkgrelease=$RELEASE \
 	--maintainer=$MAINTAINEREMAIL \
 	--requires=$REQUIRES \
@@ -84,9 +88,9 @@ checkinstall  \
 	--pakdir=/pkgs/$CODENAME \
 	--install=yes \
 	--exclude=/src/openmpi/ \
-	--include=$INSTALLPREFIX/openmpi-$OPENMPIEXACTVERSION \
-	--include=$MODULESDIR/openmpi-$OPENMPIEXACTVERSION \
+	--include=$INSTALLPREFIX/openmpi-$OPENMPIVERSION \
+	--include=$MODULESDIR/openmpi-$OPENMPIVERSION \
 	/scripts/openmpi/install.sh
 
 # Final cleanup of unpacked source files
-rm -rf /src/openmpi/openmpi-${OPENMPIEXACTVERSION}
+rm -rf /src/openmpi/openmpi-${OPENMPIVERSION}

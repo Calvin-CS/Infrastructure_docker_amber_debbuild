@@ -103,16 +103,16 @@ echo "Package requirements: ${REQUIRES}"
 module avail
 module purge
 module load cuda-${CUDAVERSION}
-module load openmpi-${OPENMPIEXACTVERSION}
+module load openmpi-${OPENMPIVERSION}
 module load plumed-${PLUMEDVERSION}
 env
 
 # Copy in a modified run_cmake file from /scripts/amber/inc/
 rm -f /src/amber/amber${AMBERVERSION}_src/build/run_cmake
 if test -f /scripts/amber/inc/run_cmake.${CODENAME}; then
-	sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:LIBBOOSTVERSION:${LIBBOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIEXACTVERSION:${OPENMPIEXACTVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/amber/inc/run_cmake.${CODENAME} > /src/amber/amber${AMBERVERSION}_src/build/run_cmake
+	sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:LIBBOOSTVERSION:${LIBBOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/amber/inc/run_cmake.${CODENAME} > /src/amber/amber${AMBERVERSION}_src/build/run_cmake
 else
-    sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:LIBBOOSTVERSION:${LIBBOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIEXACTVERSION:${OPENMPIEXACTVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/amber/inc/run_cmake > /src/amber/amber${AMBERVERSION}_src/build/run_cmake
+    sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:LIBBOOSTVERSION:${LIBBOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/amber/inc/run_cmake > /src/amber/amber${AMBERVERSION}_src/build/run_cmake
 fi
 chmod 0755 /src/amber/amber${AMBERVERSION}_src/build/run_cmake
 
