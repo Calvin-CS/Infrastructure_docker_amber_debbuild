@@ -120,7 +120,6 @@ chmod 0755 /src/amber/amber${AMBERVERSION}_src/build/run_cmake
 cd /src/amber/amber${AMBERVERSION}_src/build
 echo "y" | ./clean_build
 ./run_cmake
-make -j${NPROC}
 
 # # Checkinstall go go
 checkinstall  \

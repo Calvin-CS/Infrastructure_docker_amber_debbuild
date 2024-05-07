@@ -41,6 +41,11 @@ RUN apt-get update -y && \
     jq \
     python3-requests \
     curl \
+    flex \
+    bison \
+    patch \
+    bc \
+    cmake \
     pkgbinarymangler && \
     rm -rf /var/lib/apt/lists/*
 

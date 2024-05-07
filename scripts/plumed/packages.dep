@@ -1,1 +1,4 @@
 build-essential
+cuda-redist
+openmpi-redist
+environment-modules

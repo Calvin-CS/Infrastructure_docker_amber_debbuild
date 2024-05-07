@@ -1,3 +1,8 @@
+cuda-redist
+openmpi-redist
+plumed-redist
+libboost-redist
+environment-modules
 libblas3
 libarpack++2c2a
 intel-mkl
@@ -6,11 +11,6 @@ libopenblas64-0
 libfftw3-bin
 gfortran
 tcsh
-flex
-bison
-patch
-bc
-cmake
 xorg-dev
 libz-dev
 libbz2-dev

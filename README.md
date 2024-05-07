@@ -52,6 +52,9 @@ Frequently Asked Questions:
 - Where are my built .deb files?
   pkgs/<oscodename>/
 
+- I installed the .deb files -- how do I use this?
+
+
 - Why don't you use Ubuntu's built-in CUDA, OpenMPI, Libboost?
   Many reasons. I started this project because the built-in Ubuntu 24.04
   LTS version would not compile with Amber, and I needed a different
