@@ -1,0 +1,9 @@
+g++-11
+gcc-11
+gfortran-11
+libprotobuf32t64
+libnccl2
+libnccl-dev
+libxtensor-blas-dev
+libxtensor-dev
+libchemistry-mol-perl

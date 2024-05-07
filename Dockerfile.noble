@@ -1,0 +1,48 @@
+# focal build image
+FROM ubuntu:noble
+LABEL maintainer="Chris Wieringa <cwieri39@calvin.edu>"
+
+# Set versions and platforms
+ARG TZ=America/Detroit
+
+# Do all run commands with bash
+SHELL ["/bin/bash", "-c"]
+
+# Start with base Ubuntu
+#
+# Locale configuration -------------------------------------------------#
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt install -y locales && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+ENV TERM xterm-256color
+ENV TZ=US/Michigan
+
+# Set timezone
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo "$TZ" > /etc/timezone
+
+# add common compilation packages
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    bash \
+    lsb-release \
+    build-essential \
+    autoconf \
+    environment-modules \
+    pkg-config \
+    wget \
+    coreutils \
+    checkinstall \
+    jq \
+    python3-requests \
+    curl \
+    pkgbinarymangler && \
+    rm -rf /var/lib/apt/lists/*
+
+# Init function
+CMD ['/usr/bin/bash']

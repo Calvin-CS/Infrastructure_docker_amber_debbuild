@@ -1,0 +1,6 @@
+libprotobuf-c-dev
+libprotobuf23
+libprotoc23
+libxtensor-blas-dev
+libxtensor-dev
+libchemistry-mol-perl

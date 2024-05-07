@@ -1,0 +1,3 @@
+build-essential
+cuda-redist
+openmpi-redist

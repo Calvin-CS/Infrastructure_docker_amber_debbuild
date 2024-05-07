@@ -1,0 +1,14 @@
+#%Module 1.0
+
+proc ModulesHelp { } {
+  puts stderr "This module adds CUDA CUDAVERSION to your environment variables"
+}
+
+module-whatis "This module adds CUDA to your path and LD_LIBRARY_PATH\n"
+
+set basedir "INSTALLPREFIX/cuda-CUDAVERSION/linux-x86_64"
+prepend-path PATH "${basedir}/bin"
+prepend-path LD_LIBRARY_PATH "${basedir}/lib"
+setenv CUDA_HOME "${basedir}"
+
+conflict cuda/*

@@ -1,0 +1,27 @@
+#%Module 1.0
+
+proc ModulesHelp { } {
+   puts stderr "This module adds openmpi to your path"
+}
+ 
+module-whatis "This module adds openmpi to your path\n"
+
+prereq cuda-CUDAVERSION
+
+set version OPENMPIEXACTVERSION
+set basedir "INSTALLPREFIX/openmpi-${version}"
+prepend-path PATH "${basedir}/bin"
+prepend-path LD_LIBRARY_PATH "${basedir}/lib"
+prepend-path PKG_CONFIG_PATH "${basedir}/lib/pkgconfig"
+prepend-path MANPATH "${basedir}/share/man"
+setenv MPI_BIN "${basedir}/bin"
+setenv MPI_SYSCONFIG "${basedir}/etc"
+setenv MPI_FORTRAN_MOD_DIR "${basedir}/lib"
+setenv MPI_INCLUDE "${basedir}/include"
+setenv MPI_LIB "${basedir}/lib"
+setenv MPI_MAN "${basedir}/share/man"
+setenv MPI_HOME "${basedir}"
+setenv MPI_C_INCLUDE_PATH "${basedir}/include"
+setenv MPI_C_LIBRARIES "${basedir}/lib"
+
+conflict openmpi-*

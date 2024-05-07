@@ -1,0 +1,14 @@
+#%Module 1.0
+
+proc ModulesHelp { } {
+   puts stderr "This module adds AmberAMBERVERSION to your path"
+}
+ 
+module-whatis "This module adds AmberAMBERVERSION to your path\n"
+
+prereq cuda-CUDAVERSION
+prereq openmpi-OPENMPIEXACTVERSION
+prereq plumed-PLUMEDVERSION
+
+set version amberAMBERVERSION
+source-sh bash INSTALLPREFIX/${version}/amber.sh
