@@ -27,14 +27,18 @@ URL=https://raw.githubusercontent.com/NVIDIA/build-system-archive-import-example
 
 # Check to see if source is extracted, if not, extract it
 if ! test -d /src/cuda; then
-  echo "Making cuda src directory."
+  echo "cuda - Making cuda src directory."
   mkdir /src/cuda
+else
+  echo "cuda - src/cuda exists."
 fi
 
 # Check if download script exists, if NOT, download it
 if ! test -f /src/cuda/parse_redist.py; then
-  echo "Downloading source for CUDA parse_redist.py."
+  echo "cuda - Downloading source for CUDA parse_redist.py."
   wget ${URL} -O /src/cuda/parse_redist.py
+else
+  echo "cuda - parse_redist.py exists."
 fi
 
 # Requires
@@ -43,14 +47,18 @@ if test -f /scripts/cuda/packages.dep; then
 	if test -f /scripts/cuda/packages.dep.${CODENAME}; then
 		DEPFILES="$DEPFILES /scripts/cuda/packages.dep.${CODENAME}"
 	fi
+	REQUIRES=$(cat ${DEPFILES} | xargs | tr " " ",")
 else
 	if test -f /scripts/cuda/packages.dep.${CODENAME}; then
 		DEPFILES="/scripts/cuda/packages.dep.${CODENAME}"
+		REQUIRES=$(cat ${DEPFILES} | xargs | tr " " ",")
+	else
+		DEPFILES=
+		REQUIRES=
 	fi
 fi
 
-REQUIRES=$(cat ${DEPFILES} | xargs | tr " " ",")
-echo "Package requirements: ${REQUIRES}"
+echo "cuda - Package requirements: ${REQUIRES}"
 
 # Checkinstall build script
 cd /src/$SRCDIRECTORY
