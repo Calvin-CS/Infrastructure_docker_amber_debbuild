@@ -1,0 +1,8 @@
+Package: PKGNAME
+Version: VERSION-RELEASE
+Architecture: amd64
+Maintainer: MAINTAINERNAME <MAINTAINEREMAIL>
+Depends: REQUIRES
+Section: SECTION
+Priority: optional
+Description: PKGNAME for AmberAMBERVERSION

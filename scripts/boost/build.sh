@@ -1,9 +1,10 @@
 #!/usr/bin/bash
 
-# This is for PLUMED
-# https://github.com/plumed/plumed2
+# This is for boost
+# https://www.boost.org/
 # Use ONLY official releases
-# Tested: 2.9.0
+# Tested: 1.85.0
+
 # Read in variables
 set -a
 source <(cat /scripts/variables.env | \
@@ -15,12 +16,14 @@ set +a
 
 # Variables you shouldn't change
 # ###################################################
-PKGNAME=plumed-amberredist
-SRCDIRECTORY=plumed
-VERSION=$PLUMEDVERSION
+PKGNAME=boost-amberredist
+SRCDIRECTORY=boost
+VERSION=$BOOSTVERSION
 RELEASE=$(date +%Y%m%d%H%M)
 CODENAME=$(lsb_release -cs)
 NPROC=$(nproc)
+SECTION=libs
+
 
 ###########################
 echo "# # # # #"
@@ -28,7 +31,8 @@ echo "# ${SRCDIRECTORY} - Downloads"
 echo "# # # # #"
 
 # Download URL
-URL=https://github.com/plumed/plumed2/releases/download/v${PLUMEDVERSION}/plumed-src-${PLUMEDVERSION}.tgz
+BOOSTVERSIONUNDERSCORE=$(sed "s:\.:_:g" <<< $BOOSTVERSION)
+URL="https://boostorg.jfrog.io/artifactory/main/release/${BOOSTVERSION}/source/boost_${BOOSTVERSIONUNDERSCORE}.tar.gz"
 
 # Check to see if source is extracted, if not, extract it
 if ! test -d /src/${SRCDIRECTORY}; then
@@ -39,17 +43,23 @@ else
 fi
 
 # Check if src tar.gz exists, if NOT, download it
-if ! test -f /src/plumed/plumed-src-${PLUMEDVERSION}.tgz; then
-  echo "Downloading source for plumed plumed-src-${PLUMEDVERSION}.tgz"
-  wget ${URL} -O /src/plumed/plumed-src-${PLUMEDVERSION}.tgz
+if ! test -f /src/boost/boost-${BOOSTVERSIONUNDERSCORE}.tar.gz; then
+  echo "Downloading source for boost boost-${BOOSTVERSIONUNDERSCORE}.tar.gz"
+  wget ${URL} -O /src/boost/boost-${BOOSTVERSIONUNDERSCORE}.tar.gz
 fi
 
 # Check if sources have been unzipped
-if ! test -d /src/plumed/plumed-${PLUMEDVERSION}; then
-  echo "Unzipping source for plumed plumed-${PLUMEDVERSION}.tgz"
-  cd /src/plumed/
-  tar zxfv plumed-src-${PLUMEDVERSION}.tgz
+if ! test -d /src/boost/boost_${BOOSTVERSIONUNDERSCORE}; then
+  echo "Unzipping source for boost boost-${BOOSTVERSIONUNDERSCORE}.tar.gz"
+  cd /src/boost/
+  tar zxfv boost-${BOOSTVERSIONUNDERSCORE}.tar.gz
 fi
+
+
+###########################
+echo "# # # # #"
+echo "# ${SRCDIRECTORY} - Install required dependencies"
+echo "# # # # #"
 
 ###########################
 echo "# # # # #"
@@ -72,7 +82,6 @@ else
 		REQUIRES=
 	fi
 fi
-
 #echo "Package requirements: ${REQUIRES}"
 
 ###########################
@@ -90,11 +99,12 @@ echo "# # # # #"
 echo "# ${SRCDIRECTORY} - Sources BUILD"
 echo "# # # # #"
 
-# build script
-cd /src/plumed/plumed-${PLUMEDVERSION}
-./configure --prefix=${INSTALLPREFIX}/plumed-${PLUMEDVERSION}
-make -j${NPROC}
-make install
+# build it
+cd /src/boost/boost_${BOOSTVERSIONUNDERSCORE}
+./bootstrap.sh --prefix=${INSTALLPREFIX}/${SRCDIRECTORY}-${BOOSTVERSION}
+echo "using mpi ;" >> tools/build/src/user-config.jam
+./b2 --prefix=${INSTALLPREFIX}/${SRCDIRECTORY}-${BOOSTVERSION} --with=all -j${NPROC}
+./b2 install --prefix=${INSTALLPREFIX}/${SRCDIRECTORY}-${BOOSTVERSION} --with=all -j${NPROC}
 
 ###########################
 echo "# # # # #"
@@ -110,7 +120,7 @@ mkdir -p /chroot/${SRCDIRECTORY}/${INSTALLPREFIX}
 mv ${INSTALLPREFIX}/${SRCDIRECTORY}-${VERSION} /chroot/${SRCDIRECTORY}/${INSTALLPREFIX}/
 
 # make the updated modules file(s)
-sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:BOOSTVERSION:${BOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/${SRCDIRECTORY}/inc/${SRCDIRECTORY}-environment > /chroot/${SRCDIRECTORY}/${MODULESDIR}/${SRCDIRECTORY}-${VERSION}
+# N/A for libboost
 
 # Build and send the deb file to /pkgs
 mkdir -p /pkgs/${CODENAME}

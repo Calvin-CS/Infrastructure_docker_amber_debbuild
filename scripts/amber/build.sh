@@ -18,10 +18,18 @@ set +a
 # Variables you shouldn't change
 # ###################################################
 PKGNAME=amber${AMBERVERSION}
-SRCDIRECTORY=amber${AMBERVERSION}_src
+SRCDIRECTORY=amber${AMBERVERSION}
+VERSION=${AMBERVERSION}
 RELEASE=$(date +%Y%m%d%H%M)
 CODENAME=$(lsb_release -cs)
 NPROC=$(nproc)
+SECTION=science
+
+
+###########################
+echo "# # # # #"
+echo "# ${SRCDIRECTORY} - Downloads"
+echo "# # # # #"
 
 # Download URL
 # AmberTools: POST form to - https://ambermd.org/cgi-bin/AmberTools24-get.pl
@@ -84,20 +92,35 @@ else
     echo "AMBERACCEPTLICENSE is NOT SET! Skipping download and extraction of Amber${AMBERVERSION}!"
 fi
 
+
+###########################
+echo "# # # # #"
+echo "# ${SRCDIRECTORY} - Install required dependencies"
+echo "# # # # #"
+
 # Requires
-if test -f /scripts/amber/packages.dep; then
-	DEPFILES=/scripts/amber/packages.dep
-	if test -f /scripts/amber/packages.dep.${CODENAME}; then
-		DEPFILES="$DEPFILES /scripts/amber/packages.dep.${CODENAME}"
+if test -f /scripts/${SRCDIRECTORY}/packages.dep; then
+	DEPFILES=/scripts/${SRCDIRECTORY}/packages.dep
+	if test -f /scripts/${SRCDIRECTORY}/packages.dep.${CODENAME}; then
+		DEPFILES="${DEPFILES} /scripts/${SRCDIRECTORY}/packages.dep.${CODENAME}"
 	fi
+	REQUIRES=$(cat ${DEPFILES} | xargs | tr " " ",")
 else
-	if test -f /scripts/amber/packages.dep.${CODENAME}; then
-		DEPFILES="/scripts/amber/packages.dep.${CODENAME}"
+	if test -f /scripts/${SRCDIRECTORY}/packages.dep.${CODENAME}; then
+		DEPFILES="/scripts/${SRCDIRECTORY}/packages.dep.${CODENAME}"
+		REQUIRES=$(cat ${DEPFILES} | xargs | tr " " ",")
+	else
+		DEPFILES=
+		REQUIRES=
 	fi
 fi
 
-REQUIRES=$(cat ${DEPFILES} | xargs | tr " " ",")
-echo "Package requirements: ${REQUIRES}"
+#echo "${SRCDIRECTORY} - Package requirements: ${REQUIRES}"
+
+###########################
+echo "# # # # #"
+echo "# ${SRCDIRECTORY} - Load required environment"
+echo "# # # # #"
 
 # Load required environment modules -- CUDA, OpenMPI, Plumed
 module avail
@@ -105,41 +128,59 @@ module purge
 module load cuda-${CUDAVERSION}
 module load openmpi-${OPENMPIVERSION}
 module load plumed-${PLUMEDVERSION}
-env
+
+###########################
+echo "# # # # #"
+echo "# ${SRCDIRECTORY} - Sources BUILD"
+echo "# # # # #"
 
 # Copy in a modified run_cmake file from /scripts/amber/inc/
 rm -f /src/amber/amber${AMBERVERSION}_src/build/run_cmake
 if test -f /scripts/amber/inc/run_cmake.${CODENAME}; then
-	sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:LIBBOOSTVERSION:${LIBBOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/amber/inc/run_cmake.${CODENAME} > /src/amber/amber${AMBERVERSION}_src/build/run_cmake
+	sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:BOOSTVERSION:${BOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/amber/inc/run_cmake.${CODENAME} > /src/amber/amber${AMBERVERSION}_src/build/run_cmake
 else
-    sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:LIBBOOSTVERSION:${LIBBOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/amber/inc/run_cmake > /src/amber/amber${AMBERVERSION}_src/build/run_cmake
+    sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:BOOSTVERSION:${BOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/amber/inc/run_cmake > /src/amber/amber${AMBERVERSION}_src/build/run_cmake
 fi
 chmod 0755 /src/amber/amber${AMBERVERSION}_src/build/run_cmake
 
-# Checkinstall build script
+# build script
 cd /src/amber/amber${AMBERVERSION}_src/build
 echo "y" | ./clean_build
 ./run_cmake
+make -j${NPROC} install
 
-# # Checkinstall go go
-checkinstall  \
-	-D -y \
-	-A amd64 \
-	--pkgname=$PKGNAME \
-	--pkgversion=$AMBERVERSION \
-	--pkgrelease=$RELEASE \
-	--maintainer=$MAINTAINEREMAIL \
-	--requires=$REQUIRES \
-	--strip=yes \
-	--stripso=yes \
-	--reset-uids=yes \
-	--pakdir=/pkgs/$CODENAME \
-	--install=no \
-	--exclude=/src/amber/ \
-	--include=$INSTALLPREFIX/amber$AMBERVERSION \
-    --backup \
-	--fstrans \
-	/scripts/amber/install.sh
+###########################
+echo "# # # # #"
+echo "# ${SRCDIRECTORY} - DEBIAN PACKAGE CREATION"
+echo "# # # # # "
 
-# Final cleanup of unpacked source files
-rm -rf /src/amber/amber${AMBERVERSION}
+# Make a DEBIAN package chroot environment, and populate the control file
+mkdir -p /chroot/${SRCDIRECTORY}/DEBIAN /chroot/${SRCDIRECTORY}/${MODULESDIR}
+sed -e "s:PKGNAME:${PKGNAME}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:VERSION:${VERSION}:g; s:RELEASE:${RELEASE}:g; s:MAINTAINERNAME:${MAINTAINERNAME}:g; s:MAINTAINEREMAIL:${MAINTAINEREMAIL}:g; s:REQUIRES:${REQUIRES}:g; s:SECTION:${SECTION}:g" /scripts/control-template > /chroot/${SRCDIRECTORY}/DEBIAN/control
+mkdir -p /chroot/${SRCDIRECTORY}/${INSTALLPREFIX}
+
+# mv the source directory
+mv ${INSTALLPREFIX}/${SRCDIRECTORY}-${VERSION} /chroot/${SRCDIRECTORY}/${INSTALLPREFIX}/
+
+# make the updated modules file
+sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:BOOSTVERSION:${BOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/${SRCDIRECTORY}/inc/${SRCDIRECTORY}-environment > /chroot/${SRCDIRECTORY}/${MODULESDIR}/${SRCDIRECTORY}
+
+# Build and send the deb file to /pkgs
+mkdir -p /pkgs/${CODENAME}
+cd /chroot/
+dpkg-deb -b ${SRCDIRECTORY} /pkgs/${CODENAME}
+
+###########################
+echo "# # # # #""
+echo "# ${SRCDIRECTORY} - INSTALL DEBIAN PACKAGE"
+echo "# # # # #""
+DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  /pkgs/${CODENAME}/${PKGNAME}_${VERSION}-${RELEASE}_amd64.deb
+
+###########################
+echo "# # # # #"
+echo "# ${SRCDIRECTORY} - FINAL CLEANUP"
+echo "# # # # #"
+
+# Cleanup of flat source files
+rm -rf /src/${SRCDIRECTORY}/amber${AMBERVERSION}_src /chroot/${SRCDIRECTORY}

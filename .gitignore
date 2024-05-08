@@ -1,4 +1,4 @@
 src
 pkgs
-scripts/variables.env
-scripts/test.sh
+scripts/variables.env.testing
+scripts/variables.env.default

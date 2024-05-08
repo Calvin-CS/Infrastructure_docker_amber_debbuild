@@ -1,7 +1,7 @@
 cuda-amberredist
 openmpi-amberredist
 plumed-amberredist
-libboost-amberredist
+boost-amberredist
 environment-modules
 libblas3
 libarpack++2c2a
