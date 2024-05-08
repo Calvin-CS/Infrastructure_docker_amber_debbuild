@@ -1,3 +1,4 @@
 src
 pkgs
 scripts/variables.env
+scripts/test.sh
