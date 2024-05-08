@@ -55,8 +55,7 @@ CODENAME=$(lsb_release -cs)
 # Refresh APT cache
 apt-get update -y
 
-#SUBBUILDS=("cuda" "openmpi" "boost" "plumed" "amber")
-SUBBUILDS=("amber")
+SUBBUILDS=("cuda" "openmpi" "boost" "plumed" "amber")
 for build in ${SUBBUILDS[@]}
 do
 
