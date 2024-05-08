@@ -61,11 +61,6 @@ echo "# # # # #"
 echo "# ${SRCDIRECTORY} - Install required dependencies"
 echo "# # # # #"
 
-###########################
-echo "# # # # #"
-echo "# ${SRCDIRECTORY} - Install required dependencies"
-echo "# # # # #"
-
 # Requires
 if test -f /scripts/${SRCDIRECTORY}/packages.dep; then
 	DEPFILES=/scripts/${SRCDIRECTORY}/packages.dep

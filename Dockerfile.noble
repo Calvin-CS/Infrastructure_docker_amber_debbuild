@@ -59,7 +59,6 @@ RUN apt-get update -y && \
     environment-modules \
     pkg-config \
     coreutils \
-    checkinstall \
     jq \
     curl \
     flex \

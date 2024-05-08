@@ -37,7 +37,6 @@ RUN apt-get update -y && \
     pkg-config \
     wget \
     coreutils \
-    checkinstall \
     jq \
     python3-requests \
     curl \
