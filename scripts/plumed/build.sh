@@ -15,7 +15,7 @@ set +a
 
 # Variables you shouldn't change
 # ###################################################
-PKGNAME=plumed-redist
+PKGNAME=plumed-amberredist
 SRCDIRECTORY=plumed
 RELEASE=$(date +%Y%m%d%H%M)
 CODENAME=$(lsb_release -cs)
@@ -85,6 +85,8 @@ checkinstall  \
 	--install=yes \
 	--exclude=/src/plumed/ \
 	--include=$INSTALLPREFIX/boost-$PLUMEDVERSION \
+	--backup \
+	--fstrans \
 	/scripts/plumed/install.sh
 
 # Final cleanup of unpacked source files

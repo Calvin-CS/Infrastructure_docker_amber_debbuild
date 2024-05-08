@@ -26,26 +26,48 @@ ENV TZ=US/Michigan
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo "$TZ" > /etc/timezone
 
+# Setup basic build-essential environment
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    build-essential \
+    gnupg \
+    unixodbc-dev \
+    openssl \
+    wget \
+    curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Note: 2024-05-07 - default Python3.12 in 24.04 doesn't work with
+# the NVIDIA CUDA download script correctly. Download and install an
+# earlier version via miniconda for now
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py39_24.3.0-0-Linux-x86_64.sh -O miniconda.sh && \
+    /usr/bin/bash ./miniconda.sh -b -p /opt/conda && \
+    rm miniconda.sh && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc
+RUN . /opt/conda/etc/profile.d/conda.sh && \
+    conda activate base && \
+    pip install requests
+
 # add common compilation packages
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
     bash \
     lsb-release \
-    build-essential \
     autoconf \
     environment-modules \
     pkg-config \
-    wget \
     coreutils \
     checkinstall \
     jq \
-    python3-requests \
     curl \
     flex \
     bison \
     patch \
     bc \
     cmake \
+    rsync \
     g++-11 \
     gcc-11 \
     pkgbinarymangler && \

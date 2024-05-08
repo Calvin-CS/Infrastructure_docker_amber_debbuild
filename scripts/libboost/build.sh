@@ -16,7 +16,7 @@ set +a
 
 # Variables you shouldn't change
 # ###################################################
-PKGNAME=libboost-redist
+PKGNAME=libboost-amberredist
 SRCDIRECTORY=libboost
 RELEASE=$(date +%Y%m%d%H%M)
 CODENAME=$(lsb_release -cs)
@@ -87,6 +87,8 @@ checkinstall  \
 	--install=yes \
 	--exclude=/src/libboost/ \
 	--include=$INSTALLPREFIX/boost-$LIBBOOSTVERSION \
+	--backup \
+	--fstrans \
 	/scripts/libboost/install.sh
 
 # Final cleanup of unpacked source files

@@ -14,9 +14,17 @@ if test -d ${INSTALLPREFIX}/cuda-${CUDAVERSION}; then
     rm -rf ${INSTALLPREFIX}/cuda-${CUDAVERSION}
 fi
 
+# Check for Ubuntu 24.04 workaround -- if miniconda is installed, use that 
+# for Python instead of built in python3
+if [ -d /opt/conda ]; then
+  . /opt/conda/etc/profile.d/conda.sh
+  conda activate base
+fi
+
 # run the redist script
-python3 parse_redist.py --product cuda --os linux --arch x86_64 --output ${INSTALLPREFIX}/cuda-$CUDAVERSION --label $CUDAVERSION
-#rm *.xz
+cd /tmp/cuda/flat
+mkdir -p ${INSTALLPREFIX}/cuda-${CUDAVERSION}
+rsync -av linux-x86_64 ${INSTALLPREFIX}/cuda-${CUDAVERSION}/
 
 # make the updated modules file
 sed -e "s:CUDAVERSION:${CUDAVERSION}:g; s:INSTALLPREFIX:${INSTALLPREFIX}:g" /scripts/cuda/inc/cuda-environment > ${MODULESDIR}/cuda-${CUDAVERSION}

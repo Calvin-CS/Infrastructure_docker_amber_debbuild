@@ -46,6 +46,7 @@ RUN apt-get update -y && \
     patch \
     bc \
     cmake \
+    rsync \
     pkgbinarymangler && \
     rm -rf /var/lib/apt/lists/*
 

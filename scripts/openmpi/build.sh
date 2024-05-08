@@ -20,7 +20,7 @@ echo "OPENMPIMAJORVERSION: $OPENMPIMAJORVERSION"
 
 # Variables you shouldn't change
 # ###################################################
-PKGNAME=openmpi-redist
+PKGNAME=openmpi-amberredist
 SRCDIRECTORY=openmpi
 RELEASE=$(date +%Y%m%d%H%M)
 CODENAME=$(lsb_release -cs)
@@ -70,10 +70,11 @@ module load cuda-${CUDAVERSION}
 # Checkinstall build script
 cd /src/openmpi/openmpi-${OPENMPIVERSION}
 make clean
-./configure --prefix=${INSTALLPREFIX}/openmpi-${OPENMPIVERSION} --enable-mpi-java --with-cuda=${INSTALLPREFIX}/cuda-${CUDAVERSION}/linux-x86_64 --without-ofi --without-verbs --without-psm2 --with-devel-headers --enable-mpi-cxx --enable-mpi-fortran
+./configure --prefix=${INSTALLPREFIX}/openmpi-${OPENMPIVERSION} --enable-mpi-java --with-cuda=${INSTALLPREFIX}/cuda-${CUDAVERSION}/linux-x86_64 --without-ofi --without-verbs --without-psm2 --with-devel-headers --enable-mpi-cxx --enable-mpi-fortran --with-pmix=/usr/lib/x86_64-linux-gnu/pmix2
 make -j${NPROC}
 
 # Checkinstall go go
+echo "$PKGNAME:$OPENMPIVERSION:$RELEASE:$MAINTAINEREMAIL:$REQUIRES:$CODENAME:$INSTALLPREFIX/openmpi-$OPENMPIVERSION:$MODULESDIR/openmpi-$OPENMPIVERSION"
 checkinstall  \
 	-D -y \
 	-A amd64 \
@@ -90,7 +91,10 @@ checkinstall  \
 	--exclude=/src/openmpi/ \
 	--include=$INSTALLPREFIX/openmpi-$OPENMPIVERSION \
 	--include=$MODULESDIR/openmpi-$OPENMPIVERSION \
+	--backup \
+	--fstrans \
 	/scripts/openmpi/install.sh
+
 
 # Final cleanup of unpacked source files
 rm -rf /src/openmpi/openmpi-${OPENMPIVERSION}

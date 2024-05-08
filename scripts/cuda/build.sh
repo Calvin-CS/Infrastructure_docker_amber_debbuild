@@ -16,7 +16,7 @@ set +a
 
 # Variables you shouldn't change
 # ###################################################
-PKGNAME=cuda-redist
+PKGNAME=cuda-amberredist
 SRCDIRECTORY=cuda
 RELEASE=$(date +%Y%m%d%H%M)
 CODENAME=$(lsb_release -cs)
@@ -61,7 +61,19 @@ fi
 echo "cuda - Package requirements: ${REQUIRES}"
 
 # Checkinstall build script
-cd /src/$SRCDIRECTORY
+mkdir -p /tmp/cuda
+cp /src/cuda/parse_redist.py /tmp/cuda
+
+# Check for Ubuntu 24.04 workaround -- if miniconda is installed, use that 
+# for Python instead of built in python3
+if [ -d /opt/conda ]; then
+  . /opt/conda/etc/profile.d/conda.sh
+  conda activate base
+fi
+
+# Download and flatten things
+cd /tmp/cuda
+python3 parse_redist.py --product cuda --os linux --arch x86_64 --label $CUDAVERSION -w
 
 # Checkinstall go go
 checkinstall \
@@ -78,8 +90,11 @@ checkinstall \
 	--pakdir=/pkgs/$CODENAME \
 	--install=yes \
 	--exclude=/src/cuda/ \
+	--exclude=/tmp/cuda/ \
 	--include=$INSTALLPREFIX/cuda-$CUDAVERSION \
 	--include=$MODULESDIR/cuda-$CUDAVERSION \
+	--backup \
+	--fstrans \
 	/scripts/cuda/install.sh
 
 # Final cleanup of unpacked source files

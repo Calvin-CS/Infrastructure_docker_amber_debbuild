@@ -17,7 +17,7 @@ set +a
 
 # Variables you shouldn't change
 # ###################################################
-PKGNAME=amber
+PKGNAME=amber${AMBERVERSION}
 SRCDIRECTORY=amber${AMBERVERSION}_src
 RELEASE=$(date +%Y%m%d%H%M)
 CODENAME=$(lsb_release -cs)
@@ -137,6 +137,8 @@ checkinstall  \
 	--install=no \
 	--exclude=/src/amber/ \
 	--include=$INSTALLPREFIX/amber$AMBERVERSION \
+    --backup \
+	--fstrans \
 	/scripts/amber/install.sh
 
 # Final cleanup of unpacked source files
