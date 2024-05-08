@@ -29,9 +29,9 @@ What do these scripts do?
 
   : AmberTools - https://ambermd.org/
 
-    Amber - https://ambermd.org (optional)
+  : Amber - https://ambermd.org (optional)
 
-    Package created: amber
+    Package created: amber##   (where ## is the version number)
 
 
 Frequently Asked Questions:
