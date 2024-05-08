@@ -70,7 +70,13 @@ module load cuda-${CUDAVERSION}
 # Checkinstall build script
 cd /src/openmpi/openmpi-${OPENMPIVERSION}
 make clean
-./configure --prefix=${INSTALLPREFIX}/openmpi-${OPENMPIVERSION} --enable-mpi-java --with-cuda=${INSTALLPREFIX}/cuda-${CUDAVERSION}/linux-x86_64 --without-ofi --without-verbs --without-psm2 --with-devel-headers --enable-mpi-cxx --enable-mpi-fortran --with-pmix=/usr/lib/x86_64-linux-gnu/pmix2
+
+# do different things based off of distrubition
+if [ $CODENAME == 'noble' ]; then
+	./configure --prefix=${INSTALLPREFIX}/openmpi-${OPENMPIVERSION} --enable-mpi-java --with-cuda=${INSTALLPREFIX}/cuda-${CUDAVERSION}/linux-x86_64 --without-ofi --without-verbs --without-psm2 --with-devel-headers --enable-mpi-cxx --enable-mpi-fortran --with-pmix=/usr/lib/x86_64-linux-gnu/pmix2
+else
+	./configure --prefix=${INSTALLPREFIX}/openmpi-${OPENMPIVERSION} --enable-mpi-java --with-cuda=${INSTALLPREFIX}/cuda-${CUDAVERSION}/linux-x86_64 --without-ofi --without-verbs --without-psm2 --with-devel-headers --enable-mpi-cxx --enable-mpi-fortran
+fi
 make -j${NPROC}
 
 # Checkinstall go go

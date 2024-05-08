@@ -2,5 +2,3 @@ cuda-amberredist
 build-essential
 default-jdk
 gfortran
-libpmix2
-libpmix-dev
