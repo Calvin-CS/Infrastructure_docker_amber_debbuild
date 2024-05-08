@@ -115,9 +115,9 @@ cd /chroot/
 dpkg-deb -b ${SRCDIRECTORY} /pkgs/${CODENAME}
 
 ###########################
-echo "# # # # #""
+echo "# # # # #"
 echo "# ${SRCDIRECTORY} - INSTALL DEBIAN PACKAGE"
-echo "# # # # #""
+echo "# # # # #"
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
   /pkgs/${CODENAME}/${PKGNAME}_${VERSION}-${RELEASE}_amd64.deb
 
