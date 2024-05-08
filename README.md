@@ -53,7 +53,7 @@ Frequently Asked Questions:
 
   4. Build the appropriate Docker image to build your packages
 
-     ./build.sh <oscodename>
+     ./build.sh &lt;oscodename&gt;
 
 
      Example: for Ubuntu 24.04 LTS (noble), run:
@@ -62,7 +62,7 @@ Frequently Asked Questions:
 
   5. Start the build process
 
-     ./run.sh <oscodename>
+     ./run.sh &lt;oscodename&gt;
 
 
      Example: for Ubuntu 24.04 LTS (noble), run:
@@ -75,12 +75,12 @@ Frequently Asked Questions:
 
 - Where are my built .deb files?
 
-  pkgs/<oscodename>/
+  pkgs/&lt;oscodename&gt;/
 
 
 - Ickk -- what's with all the leftover files? How do I get rid of them?
 
-  Run ./clean.sh <oscodename>
+  Run ./clean.sh &lt;oscodename&gt;
 
 
 - I installed the .deb files -- how do I use this?
@@ -88,7 +88,7 @@ Frequently Asked Questions:
   The packages SHOULD have installed a ton of dependencies, including environment-modules. To get everything in the path correctly, run:
   
 
-  module -s load amber24
+  module -s load amber24     (or amber22 if compiling amber22)
 
 
   This will automatically source the appropriate amber.sh file as well as load all the required dependencies (CUDA, OpenMPI, Plumed, etc). All the amber programs in Amber's bin directory should be available now.
