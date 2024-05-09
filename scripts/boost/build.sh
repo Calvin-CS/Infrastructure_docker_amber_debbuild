@@ -16,14 +16,13 @@ set +a
 
 # Variables you shouldn't change
 # ###################################################
-PKGNAME=boost-amberredist
+PKGNAME=boost-redist
 SRCDIRECTORY=boost
 VERSION=$BOOSTVERSION
 RELEASE=$(date +%Y%m%d%H%M)
 CODENAME=$(lsb_release -cs)
 NPROC=$(nproc)
 SECTION=libs
-
 
 ###########################
 echo "# # # # #"
@@ -81,10 +80,8 @@ fi
 
 ###########################
 echo "# # # # #"
-echo "# ${SRCDIRECTORY} - Load required environment"
+echo "# ${SRCDIRECTORY} - Load required module environment"
 echo "# # # # #"
-
-# Load required environment modules -- CUDA and OpenMPI
 module purge
 module load cuda-${CUDAVERSION}
 module load openmpi-${OPENMPIVERSION}
@@ -97,8 +94,7 @@ echo "# # # # #"
 # build it
 cd /src/boost/boost_${BOOSTVERSIONUNDERSCORE}
 ./bootstrap.sh --prefix=${INSTALLPREFIX}/${SRCDIRECTORY}-${BOOSTVERSION}
-echo "using mpi ;" >> tools/build/src/user-config.jam
-./b2 --prefix=${INSTALLPREFIX}/${SRCDIRECTORY}-${BOOSTVERSION} --with=all -j${NPROC}
+echo "using mpi ;" > tools/build/src/user-config.jam
 ./b2 install --prefix=${INSTALLPREFIX}/${SRCDIRECTORY}-${BOOSTVERSION} --with=all -j${NPROC}
 
 ###########################
@@ -120,6 +116,8 @@ mv ${INSTALLPREFIX}/${SRCDIRECTORY}-${VERSION} /chroot/${SRCDIRECTORY}/${INSTALL
 # Build and send the deb file to /pkgs
 mkdir -p /pkgs/${CODENAME}
 cd /chroot/
+ls -R /chroot/
+cat /chroot/${SRCDIRECTORY}/DEBIAN/control
 dpkg-deb -b ${SRCDIRECTORY} /pkgs/${CODENAME}
 
 ###########################

@@ -16,7 +16,7 @@ set +a
 
 # Variables you shouldn't change
 # ###################################################
-PKGNAME=cuda-amberredist
+PKGNAME=cuda-redist
 SRCDIRECTORY=cuda
 VERSION=$CUDAVERSION
 RELEASE=$(date +%Y%m%d%H%M)
@@ -77,6 +77,11 @@ echo "# # # # #"
 echo "# ${SRCDIRECTORY} - Sources BUILD"
 echo "# # # # #"
 
+# Noble -- this breaks something, so I need to do all these operations in /tmp
+mkdir -p /tmp/${SRCDIRECTORY}
+cp /src/${SRCDIRECTORY}/parse_redist.py /tmp/${SRCDIRECTORY}/
+cp /src/${SRCDIRECTORY}/*.tar.xz /tmp/${SRCDIRECTORY}/
+
 # Check for Ubuntu 24.04 workaround -- if miniconda is installed, use that 
 # for Python instead of built in python3
 if [ -d /opt/conda ]; then
@@ -85,13 +90,16 @@ if [ -d /opt/conda ]; then
 fi
 
 # Download and flatten things
-cd /src/${SRCDIRECTORY}
+cd /tmp/${SRCDIRECTORY}
 python3 parse_redist.py --product cuda --os linux --arch x86_64 --label $VERSION -w
 
 # Install it into the system - into $INSTALLPREFIX
-cd /src/${SRCDIRECTORY}/flat
+cd /tmp/${SRCDIRECTORY}/flat
 mkdir -p ${INSTALLPREFIX}/${SRCDIRECTORY}-${VERSION}/
 mv linux-x86_64 ${INSTALLPREFIX}/${SRCDIRECTORY}-${VERSION}/
+
+# Copy sources back for later
+cp -n /tmp/${SRCDIRECTORY}/*.tar.xz /src/${SRCDIRECTORY}/
 
 ###########################
 echo "# # # # #"
@@ -107,11 +115,17 @@ mkdir -p /chroot/${SRCDIRECTORY}/${INSTALLPREFIX}
 mv ${INSTALLPREFIX}/${SRCDIRECTORY}-${VERSION} /chroot/${SRCDIRECTORY}/${INSTALLPREFIX}/
 
 # make the updated modules file
-sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:BOOSTVERSION:${BOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/${SRCDIRECTORY}/inc/${SRCDIRECTORY}-environment > /chroot/${SRCDIRECTORY}/${MODULESDIR}/${SRCDIRECTORY}-${VERSION}
+if test -f /scripts/${SRCDIRECTORY}/inc/${SRCDIRECTORY}-environment.${CODENAME}; then
+  sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:BOOSTVERSION:${BOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/${SRCDIRECTORY}/inc/${SRCDIRECTORY}-environment.${CODENAME} > /chroot/${SRCDIRECTORY}/${MODULESDIR}/${SRCDIRECTORY}-${VERSION}
+else
+  sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:BOOSTVERSION:${BOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/${SRCDIRECTORY}/inc/${SRCDIRECTORY}-environment > /chroot/${SRCDIRECTORY}/${MODULESDIR}/${SRCDIRECTORY}-${VERSION}
+fi
 
 # Build and send the deb file to /pkgs
 mkdir -p /pkgs/${CODENAME}
 cd /chroot/
+ls -R /chroot/
+cat /chroot/${SRCDIRECTORY}/DEBIAN/control
 dpkg-deb -b ${SRCDIRECTORY} /pkgs/${CODENAME}
 
 ###########################
@@ -120,6 +134,13 @@ echo "# ${SRCDIRECTORY} - INSTALL DEBIAN PACKAGE"
 echo "# # # # #"
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
   /pkgs/${CODENAME}/${PKGNAME}_${VERSION}-${RELEASE}_amd64.deb
+
+###########################
+echo "# # # # #"
+echo "# ${SRCDIRECTORY} - Load module environment"
+echo "# # # # #"
+module load ${SRCDIRECTORY}-${VERSION}
+module avail
 
 ###########################
 echo "# # # # #"

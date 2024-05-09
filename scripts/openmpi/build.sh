@@ -20,7 +20,7 @@ OPENMPIMAJORVERSION=$(echo $OPENMPIVERSION | awk -F. '{print $1 "." $2;}' -)
 
 # Variables you shouldn't change
 # ###################################################
-PKGNAME=openmpi-amberredist
+PKGNAME=openmpi-redist
 SRCDIRECTORY=openmpi
 VERSION=$OPENMPIVERSION
 RELEASE=$(date +%Y%m%d%H%M)
@@ -84,10 +84,8 @@ fi
 
 ###########################
 echo "# # # # #"
-echo "# ${SRCDIRECTORY} - Load required environment"
+echo "# ${SRCDIRECTORY} - Load required module environment"
 echo "# # # # #"
-
-# Load required environment modules -- CUDA
 module purge
 module load cuda-${CUDAVERSION}
 
@@ -124,11 +122,19 @@ mv ${INSTALLPREFIX}/${SRCDIRECTORY}-${VERSION} /chroot/${SRCDIRECTORY}/${INSTALL
 
 # make the updated modules file(s)
 sed -e "s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:INSTALLPREFIX:${INSTALLPREFIX}:g" /scripts/openmpi/inc/setupmpi.sh > /chroot/${SRCDIRECTORY}/${INSTALLPREFIX}/openmpi-${OPENMPIVERSION}/setupmpi.sh
-sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:BOOSTVERSION:${BOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/${SRCDIRECTORY}/inc/${SRCDIRECTORY}-environment > /chroot/${SRCDIRECTORY}/${MODULESDIR}/${SRCDIRECTORY}-${VERSION}
+
+if test -f /scripts/${SRCDIRECTORY}/inc/${SRCDIRECTORY}-environment.${CODENAME}; then
+  sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:BOOSTVERSION:${BOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/${SRCDIRECTORY}/inc/${SRCDIRECTORY}-environment.${CODENAME} > /chroot/${SRCDIRECTORY}/${MODULESDIR}/${SRCDIRECTORY}-${VERSION}
+else
+  sed -e "s:INSTALLPREFIX:${INSTALLPREFIX}:g; s:AMBERVERSION:${AMBERVERSION}:g; s:BOOSTVERSION:${BOOSTVERSION}:g; s:PLUMEDVERSION:${PLUMEDVERSION}:g; s:OPENMPIVERSION:${OPENMPIVERSION}:g; s:CUDAVERSION:${CUDAVERSION}:g" /scripts/${SRCDIRECTORY}/inc/${SRCDIRECTORY}-environment > /chroot/${SRCDIRECTORY}/${MODULESDIR}/${SRCDIRECTORY}-${VERSION}
+fi
+
 
 # Build and send the deb file to /pkgs
 mkdir -p /pkgs/${CODENAME}
 cd /chroot/
+ls -R /chroot/
+cat /chroot/${SRCDIRECTORY}/DEBIAN/control
 dpkg-deb -b ${SRCDIRECTORY} /pkgs/${CODENAME}
 
 ###########################
@@ -137,6 +143,14 @@ echo "# ${SRCDIRECTORY} - INSTALL DEBIAN PACKAGE"
 echo "# # # # #"
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
   /pkgs/${CODENAME}/${PKGNAME}_${VERSION}-${RELEASE}_amd64.deb
+
+
+###########################
+echo "# # # # #"
+echo "# ${SRCDIRECTORY} - Load module environment"
+echo "# # # # #"
+module load ${SRCDIRECTORY}-${VERSION}
+module avail
 
 ###########################
 echo "# # # # #"

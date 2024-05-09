@@ -11,4 +11,12 @@ prereq openmpi-OPENMPIVERSION
 prereq plumed-PLUMEDVERSION
 
 set version amberAMBERVERSION
-source-sh bash INSTALLPREFIX/${version}/amber.sh
+
+# since older environment-modules can't source amber.sh, do it manually
+# source-sh bash INSTALLPREFIX/${version}/amber.sh
+prepend-path AMBERHOME INSTALLPREFIX/${version}
+prepend-path PATH INSTALLPREFIX/${version}/bin
+prepend-path LD_LIBRARY_PATH INSTALLPREFIX/${version}/lib:/usr/lib/x86_64-linux-gnu
+prepend-path PERL5LIB INSTALLPREFIX/${version}/lib/perl
+prepend-path PYTHONPATH INSTALLPREFIX/${version}/lib/python3.12/site-packages
+prepend-path QUICK_BASIS INSTALLPREFIX/${version}/AmberTools/src/quick/basis

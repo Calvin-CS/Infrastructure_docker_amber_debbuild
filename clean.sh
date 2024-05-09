@@ -24,6 +24,7 @@ do
 	# now, cleanup the docker images
 	# first prune stopped containers
 	docker container prune -f
-	docker rmi $(docker images "builder-${CODENAME}" -a -q)
+	docker rmi $(docker images "builder-${dist}" -a -q)
 done
 
+docker builder prune -a -f

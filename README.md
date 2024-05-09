@@ -11,19 +11,19 @@ What do these scripts do?
 
   : NVIDIA CUDA toolkit - https://developer.nvidia.com/cuda-toolkit
 
-    Packaged created: cuda-amberredist
+    Packaged created: cuda-redist
 
   : OpenMPI - https://www.open-mpi.org/
 
-    Package created: openmpi-amberredist
+    Package created: openmpi-redist
 
   : Libboost - https://www.boost.org/
 
-    Package created: boost-amberredist
+    Package created: boost-redist
 
   : Plumed - https://www.plumed.org/
 
-    Package created: plumed-amberredist
+    Package created: plumed-redist
 
 - Downloads, compiles, and makes .deb files for the speicifed Ubuntu version
 
@@ -70,7 +70,7 @@ Frequently Asked Questions:
      ./run.sh noble
 
   
-  This process will take a lot of time (hours) depending on your hardware -- my workstation takes about 1.5 hours to make all the packages. I'd recommend making a repository and putting them all in a repository - to make dependency auto-solving a lot easier.
+  This process will take a lot of time (hours) depending on your hardware -- my workstation takes around 68 minutes to make all the packages. I'd recommend making a repository and putting them all in a repository - to make dependency auto-solving a lot easier.
 
 
 - Where are my built .deb files?

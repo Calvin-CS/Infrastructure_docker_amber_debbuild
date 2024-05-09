@@ -22,21 +22,17 @@ do
 
     # echo out some steps
     echo "##############################################################"
-    echo "# Removing sources & packages for ${build}"
+    echo "# Removing sources for ${build}"
     echo "##############################################################"
     echo ""
 
     # remove /src/${build}
     rm -rf /src/${build}
-    rm -f /pkgs/${CODENAME}/${build}*.deb
-
 done
 
-# last, cleanup the src and pkgs directories, if empty
-if [ -z "$(ls -A /src)" ]; then
-    rm -rf /src
-fi
-
-if [ -z "$(ls -A /pkgs)" ]; then
-    rm -rf /pkgs
-fi
+# remove pkgs
+echo "##############################################################"
+echo "# Removing packages for ${CODENAME}"
+echo "##############################################################"
+echo ""
+rm -rf /pkgs/${CODENAME}
